@@ -13,13 +13,19 @@ public partial class SubjectPointStepMaster
 
     public string? SubjectStepName { get; set; }
 
-    public long? SubjectStepImageId { get; set; }
+    public long? SubjectStepImageIdlg { get; set; }
+
+    public long? SubjectStepImageIdsm { get; set; }
 
     public string? SubjectStepDescription { get; set; }
 
-    public int? SubjectStepVideoId { get; set; }
+    public string? SubjectStepVideoUrl { get; set; }
 
     public int? OrderNo { get; set; }
 
     public bool? IsActive { get; set; }
+
+    public virtual SubjectMaster? Subject { get; set; }
+
+    public virtual SubjectPointMaster? SubjectPoint { get; set; }
 }

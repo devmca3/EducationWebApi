@@ -84,3 +84,4 @@
 /Users/devnarayandewangan/CSharpProjects/EducationWebApi/bin/Debug/net7.0/Scrutor.dll
 /Users/devnarayandewangan/CSharpProjects/EducationWebApi/bin/Debug/net7.0/Swashbuckle.AspNetCore.Filters.dll
 /Users/devnarayandewangan/CSharpProjects/EducationWebApi/bin/Debug/net7.0/Swashbuckle.AspNetCore.Filters.Abstractions.dll
+/Users/devnarayandewangan/CSharpProjects/EducationWebApi/obj/Debug/net7.0/EducationWebApi.sourcelink.json

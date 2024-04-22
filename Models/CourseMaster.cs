@@ -20,4 +20,6 @@ public partial class CourseMaster
     public bool? Status { get; set; }
 
     public bool? Deleted { get; set; }
+
+    public virtual ICollection<SubjectMaster> SubjectMasters { get; set; } = new List<SubjectMaster>();
 }

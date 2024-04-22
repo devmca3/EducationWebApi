@@ -33,19 +33,19 @@ namespace EducationWebApi.Controllers
         {
             string username = user.Username.Trim('\'').Trim('=').Trim(' ');
             string password = user.Password.Trim('\'').Trim('=').Trim(' ');
-            //UserMaster userMaster = null;
+            UserMaster userMaster = null;
             try
             {
-                //userMaster = _context.UserMasters.Where(x => x.Email == username && x.Password == password).First<UserMaster>();
+                userMaster = _context.UserMasters.Where(x => x.UserName == username && x.Password == password).First<UserMaster>();
             }
             catch (Exception ex)
             {
-                //userMaster = null;
+                userMaster = null;
             }
             
 
             string token = null;
-            //token = userMaster != null ? CreateToken(userMaster) : null;
+            token = userMaster != null ? CreateToken(userMaster) : null;
             if (token != null)
             {
                 RD = new DtoReturnData
@@ -72,36 +72,35 @@ namespace EducationWebApi.Controllers
             }
             return await Task.FromResult(RD);
         }
-        // private string CreateToken(UserMaster user)
-        // {
+        private string CreateToken(UserMaster user)
+        {
 
-        //     List<Claim> claims = new List<Claim> {
-        //         new Claim("Name", user.DisplayName),
-        //         new Claim("Role", user.Role),
-        //         new Claim(ClaimTypes.Role, user.Role),
-        //         new Claim("Uid", user.Userid.ToString()),
-        //         new Claim("EmailID", user.Email.ToString()),
-        //         //new Claim("MobileNo", user..ToString()),
-        //         //new Claim("ExpiryDate", user.ExpiryDate.ToString("yyyy-MM-dd")),
-        //         //new Claim("IsActive", user.isac.ToString()),
-        //         //new Claim("Status", user.Status.ToString()),
-        //     };
+            List<Claim> claims = new List<Claim> {
+                new Claim("Name", user.Name),
+                new Claim("Role", user.UserTypeId.ToString()),
+                new Claim(ClaimTypes.Role, user.UserTypeId.ToString()),
+                new Claim("Uid", user.UserId.ToString())
+                //new Claim("MobileNo", user..ToString()),
+                //new Claim("ExpiryDate", user.ExpiryDate.ToString("yyyy-MM-dd")),
+                //new Claim("IsActive", user.isac.ToString()),
+                //new Claim("Status", user.Status.ToString()),
+            };
 
-        //     var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration.GetSection("AppSettings:Token").Value!));
-        //     //var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("ajlfjldfl745747dfdfdjkhfjfdljfljlfflfdljlfjderirrieiru4857398457943857djfdsjhfsdfhkdshfksdhfkhsdakfhkdshfhsdjkfhdshfdshfdfdslfldsfldhsfhdskfhkdshvnvnjdkhfsdfhsdhfdhsjkfhskdhfkahhdjkh4y4389578943575497nvbvcfsfqhk"));
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration.GetSection("AppSettings:Token").Value!));
+            //var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("ajlfjldfl745747dfdfdjkhfjfdljfljlfflfdljlfjderirrieiru4857398457943857djfdsjhfsdfhkdshfksdhfkhsdakfhkdshfhsdjkfhdshfdshfdfdslfldsfldhsfhdskfhkdshvnvnjdkhfsdfhsdhfdhsjkfhskdhfkahhdjkh4y4389578943575497nvbvcfsfqhk"));
 
-        //     var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
+            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
 
-        //     var token = new JwtSecurityToken(
-        //             claims: claims,
-        //             expires: DateTime.Now.AddDays(1),
-        //             signingCredentials: creds
-        //         );
+            var token = new JwtSecurityToken(
+                    claims: claims,
+                    expires: DateTime.Now.AddDays(1),
+                    signingCredentials: creds
+                );
 
-        //     var jwt = new JwtSecurityTokenHandler().WriteToken(token);
+            var jwt = new JwtSecurityTokenHandler().WriteToken(token);
 
-        //     return jwt;
-        // }
+            return jwt;
+        }
 
         [HttpGet, Authorize]
         public ActionResult<string> GetUserDetail()
@@ -109,7 +108,7 @@ namespace EducationWebApi.Controllers
             DtoUserDetail dtoUserDetail = null;
             //var data = User.Claims.ToList();
             string name = User.Claims.First(x => x.Type == "Name").Value.ToString();
-            string email = User.Claims.First(x => x.Type == "EmailID").Value.ToString();
+            //string email = User.Claims.First(x => x.Type == "EmailID").Value.ToString();
             //string mobile = User.Claims.First(x => x.Type == "MobileNo").Value.ToString();
             string role = User.Claims.First(x => x.Type == ClaimTypes.Role).Value.ToString();
             //string companyid = User.Claims.First(x => x.Type == "CompanyID").Value.ToString();
@@ -120,7 +119,7 @@ namespace EducationWebApi.Controllers
             dtoUserDetail = new DtoUserDetail()
             {
                 Name = name,
-                EmailID = email,
+                //EmailID = email,
                 //MobileNo = mobile,
                 Role = role,
                 //CompanyID = Convert.ToInt32(companyid.ToString()),
@@ -154,8 +153,7 @@ namespace EducationWebApi.Controllers
         }
         private bool UserMasterExists(int id)
         {
-            return false;
-            //return (_context.UserMasters?.Any(e => e.Userid == id)).GetValueOrDefault();
+            return (_context.UserMasters?.Any(e => e.UserId == id)).GetValueOrDefault();
         }
 
     }

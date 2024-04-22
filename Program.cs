@@ -72,8 +72,8 @@ builder.Services.AddAuthentication().AddJwtBearer(options =>
                 builder.Configuration.GetSection("AppSettings:Token").Value!))
     };
 });
-//builder.Services.AddDbContext<db_Context>(options =>
-    //options.UseSqlServer(builder.Configuration.GetSection("AppSettings:constr").Value));
+builder.Services.AddDbContext<db_Context>(options =>
+    options.UseSqlServer(builder.Configuration.GetSection("AppSettings:constr").Value));
     
 
 //builder.Services.AddDbContext<db_Context>(options =>

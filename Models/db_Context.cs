@@ -29,6 +29,10 @@ public partial class db_Context : DbContext
 
     public virtual DbSet<ImageType> ImageTypes { get; set; }
 
+    public virtual DbSet<QuestionMaster> QuestionMasters { get; set; }
+
+    public virtual DbSet<QuestionType> QuestionTypes { get; set; }
+
     public virtual DbSet<SlideMaster> SlideMasters { get; set; }
 
     public virtual DbSet<StudentMaster> StudentMasters { get; set; }
@@ -152,6 +156,42 @@ public partial class db_Context : DbContext
                 .HasColumnName("ImageType");
         });
 
+        modelBuilder.Entity<QuestionMaster>(entity =>
+        {
+            entity.HasKey(e => e.QuestionId);
+
+            entity.ToTable("QuestionMaster");
+
+            entity.Property(e => e.QuestionId).HasColumnName("QuestionID");
+            entity.Property(e => e.CorrectAnswer).HasMaxLength(50);
+            entity.Property(e => e.CourseId).HasColumnName("CourseID");
+            entity.Property(e => e.CreatedDate).HasColumnType("datetime");
+            entity.Property(e => e.Marks).HasColumnType("decimal(10, 2)");
+            entity.Property(e => e.ModifiedDate).HasColumnType("datetime");
+            entity.Property(e => e.OptionA).HasMaxLength(200);
+            entity.Property(e => e.OptionAPhoto).HasColumnName("OptionA_Photo");
+            entity.Property(e => e.OptionB).HasMaxLength(200);
+            entity.Property(e => e.OptionBPhoto).HasColumnName("OptionB_Photo");
+            entity.Property(e => e.OptionC).HasMaxLength(255);
+            entity.Property(e => e.OptionCPhoto).HasColumnName("OptionC_Photo");
+            entity.Property(e => e.OptionD).HasMaxLength(255);
+            entity.Property(e => e.OptionDPhoto).HasColumnName("OptionD_Photo");
+            entity.Property(e => e.OptionE).HasMaxLength(255);
+            entity.Property(e => e.OptionEPhoto).HasColumnName("OptionE_Photo");
+            entity.Property(e => e.QuestionTypeId).HasColumnName("QuestionTypeID");
+            entity.Property(e => e.SubjectId).HasColumnName("SubjectID");
+        });
+
+        modelBuilder.Entity<QuestionType>(entity =>
+        {
+            entity.ToTable("QuestionType");
+
+            entity.Property(e => e.QuestionTypeId).HasColumnName("QuestionTypeID");
+            entity.Property(e => e.QuestionType1)
+                .HasMaxLength(50)
+                .HasColumnName("QuestionType");
+        });
+
         modelBuilder.Entity<SlideMaster>(entity =>
         {
             entity.HasKey(e => e.SlideId);
@@ -159,7 +199,12 @@ public partial class db_Context : DbContext
             entity.ToTable("SlideMaster");
 
             entity.Property(e => e.SlideId).HasColumnName("SlideID");
-            entity.Property(e => e.ImageId).HasColumnName("ImageID");
+            entity.Property(e => e.ImageId)
+                .HasDefaultValueSql("((0))")
+                .HasColumnName("ImageID");
+            entity.Property(e => e.ImageIdsm)
+                .HasDefaultValueSql("((0))")
+                .HasColumnName("ImageIDSM");
             entity.Property(e => e.SlideName).HasMaxLength(50);
         });
 
@@ -186,8 +231,17 @@ public partial class db_Context : DbContext
 
             entity.Property(e => e.SubjectId).HasColumnName("SubjectID");
             entity.Property(e => e.CourseId).HasColumnName("CourseID");
-            entity.Property(e => e.ImageId).HasColumnName("ImageID");
+            entity.Property(e => e.ImageIdlg)
+                .HasDefaultValueSql("((0))")
+                .HasColumnName("ImageIDLG");
+            entity.Property(e => e.ImageIdsm)
+                .HasDefaultValueSql("((0))")
+                .HasColumnName("ImageIDSM");
             entity.Property(e => e.SubjectName).HasMaxLength(250);
+
+            entity.HasOne(d => d.Course).WithMany(p => p.SubjectMasters)
+                .HasForeignKey(d => d.CourseId)
+                .HasConstraintName("FK_SubjectMaster_CourseMaster");
         });
 
         modelBuilder.Entity<SubjectPointMaster>(entity =>
@@ -197,11 +251,20 @@ public partial class db_Context : DbContext
             entity.ToTable("SubjectPointMaster");
 
             entity.Property(e => e.SubjectPointId).HasColumnName("SubjectPointID");
-            entity.Property(e => e.SubjectDescription).HasMaxLength(450);
             entity.Property(e => e.SubjectId).HasColumnName("SubjectID");
-            entity.Property(e => e.SubjectImageId).HasColumnName("SubjectImageID");
+            entity.Property(e => e.SubjectPointDescription).HasMaxLength(450);
+            entity.Property(e => e.SubjectPointImageIdlg)
+                .HasDefaultValueSql("((0))")
+                .HasColumnName("SubjectPointImageIDLG");
+            entity.Property(e => e.SubjectPointImageIdsm)
+                .HasDefaultValueSql("((0))")
+                .HasColumnName("SubjectPointImageIDSM");
             entity.Property(e => e.SubjectPointName).HasMaxLength(250);
-            entity.Property(e => e.VideoId).HasColumnName("VideoID");
+            entity.Property(e => e.SubjectPointVideoUrl).HasMaxLength(250);
+
+            entity.HasOne(d => d.Subject).WithMany(p => p.SubjectPointMasters)
+                .HasForeignKey(d => d.SubjectId)
+                .HasConstraintName("FK_SubjectPointMaster_SubjectMaster");
         });
 
         modelBuilder.Entity<SubjectPointStepMaster>(entity =>
@@ -214,9 +277,22 @@ public partial class db_Context : DbContext
             entity.Property(e => e.SubjectId).HasColumnName("SubjectID");
             entity.Property(e => e.SubjectPointId).HasColumnName("SubjectPointID");
             entity.Property(e => e.SubjectStepDescription).HasMaxLength(450);
-            entity.Property(e => e.SubjectStepImageId).HasColumnName("SubjectStepImageID");
+            entity.Property(e => e.SubjectStepImageIdlg)
+                .HasDefaultValueSql("((0))")
+                .HasColumnName("SubjectStepImageIDLG");
+            entity.Property(e => e.SubjectStepImageIdsm)
+                .HasDefaultValueSql("((0))")
+                .HasColumnName("SubjectStepImageIDSM");
             entity.Property(e => e.SubjectStepName).HasMaxLength(250);
-            entity.Property(e => e.SubjectStepVideoId).HasColumnName("SubjectStepVideoID");
+            entity.Property(e => e.SubjectStepVideoUrl).HasMaxLength(250);
+
+            entity.HasOne(d => d.Subject).WithMany(p => p.SubjectPointStepMasters)
+                .HasForeignKey(d => d.SubjectId)
+                .HasConstraintName("FK_SubjectPointStepMaster_SubjectMaster");
+
+            entity.HasOne(d => d.SubjectPoint).WithMany(p => p.SubjectPointStepMasters)
+                .HasForeignKey(d => d.SubjectPointId)
+                .HasConstraintName("FK_SubjectPointStepMaster_SubjectPointMaster");
         });
 
         modelBuilder.Entity<TrainingCenterMaster>(entity =>

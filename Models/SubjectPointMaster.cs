@@ -11,13 +11,19 @@ public partial class SubjectPointMaster
 
     public string? SubjectPointName { get; set; }
 
-    public string? SubjectDescription { get; set; }
+    public string? SubjectPointDescription { get; set; }
 
-    public long? SubjectImageId { get; set; }
+    public long? SubjectPointImageIdlg { get; set; }
 
-    public long? VideoId { get; set; }
+    public long? SubjectPointImageIdsm { get; set; }
+
+    public string? SubjectPointVideoUrl { get; set; }
 
     public bool? IsActive { get; set; }
 
     public int? OrderNo { get; set; }
+
+    public virtual SubjectMaster? Subject { get; set; }
+
+    public virtual ICollection<SubjectPointStepMaster> SubjectPointStepMasters { get; set; } = new List<SubjectPointStepMaster>();
 }
